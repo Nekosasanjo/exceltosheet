@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ブログ風コード埋め込みサンプル</title>
+
+<!-- Prism core -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+<link id="prism-dark" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" disabled />
+
+<!-- 外部CSS -->
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <h1>ブログ記事風コード埋め込みサンプル</h1>
+
+  <!-- 記事1 -->
+  <article class="card">
+    <h2>エクセルのファイルからGoogleスプレッドシートに変換する</h2>
+    <p>エクセルファイルとCSVファイルでは少しやり方が違うので気を付けてください。</p>
+
+    <h2>１:GoogleDriveにフォルダを作る</h2>
+    <p>変換したいエクセルのフォルダ、変換後のフォルダ、変換したいCSVのフォルダ、変換後のフォルダの計４つ作る。その中にエクセルとCSVのファイルを入れておいてください</p>
+
+
+    <h2>２:GoogleDriveにGoogleAppsScriptのシートを作成する</h2>
+    <p>GoogleDriveの右上の新規のところを押してその他からGoogleAppsScriptを選択する。
+    <br>※飛んだ先で共同編集者がなんたらと書かれてあるときがありますが、とりあえずスクリプトを作成というのを押してください。
+    
+    </p>
+
+    <h2>３:サービスを増やす</h2>
+    <p>サービスの右側の＋ボタンを選択し、サービスを追加でいろいろあるAPIの中からDriveAPIを選び追加を押しましょう。
+
+
+    </p>
+
+    <h2>４:コードの記入</h2>
+    <p>下記のコードを画像のようにコピー＆ペーストしてください。コメントにも書いているようにフォルダIDをコード内に記入を忘れずにしてください。
+
+    </p>
+    <img src="imagecode.png" width="550" height="300";>
+
+
+
+    
+    <pre class="line-numbers"><code id="code1" class="language-js">
+// エクセル変換用
+function excelchenge() {
+  //フォルダIDはフォルダURLの"https://drive.google.com/drive/u/1/folders/”以降の文字列になります。
+  //Excelがあるフォルダ
+  let sourceFolderId = 'エクセル格納フォルダのID'
+  //スプレッドシート出力先フォルダー
+  let destFolderId = '保存先のフォルダID'
+ 
+  // フォルダ配下のファイルを取得
+  var sourceFolder = DriveApp.getFolderById(sourceFolderId)
+  var folderFiles  = sourceFolder.getFiles()
+ 
+  // Excelファイルをイテレートして順にスプレッドシートに変換
+  while(folderFiles.hasNext()) {
+    var file = folderFiles.next()
+    //Excelファイルの判断   
+    if (file.getMimeType() == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')  {
+      var fileName  = file.getName()
+      Logger.log(fileName)
+      Logger.log(file.getMimeType())
+      var option =  {
+        mimeType:MimeType.GOOGLE_SHEETS,  //Google sheets
+        parents:[destFolderId],      //出力先フォルダーを指定
+        name:fileName                    //出力先ファイル名
+      }
+      Drive.Files.create(option,file)
+      
+    }
+  
+  Logger.log("変換完了");
+  }
+}
+
+//CSV変換用
+function csvchenge() {
+  //フォルダIDはフォルダURLの"https://drive.google.com/drive/u/1/folders/”以降の文字列になります。
+  //CSVがあるフォルダ
+  let sourceFolderId = 'CSV格納フォルダのID'
+  //スプレッドシート出力先フォルダー
+  let destFolderId = '保存先のID'
+ 
+  // フォルダ配下のファイルを取得
+  var sourceFolder = DriveApp.getFolderById(sourceFolderId)
+  var folderFiles  = sourceFolder.getFiles()
+ 
+  // Excelファイルをイテレートして順にスプレッドシートに変換
+  while(folderFiles.hasNext()) {
+    var file = folderFiles.next()
+    //Excelファイルの判断   
+    
+      var fileName  = file.getName()
+      Logger.log(fileName)
+      Logger.log(file.getMimeType())
+      var option =  {
+        mimeType:MimeType.GOOGLE_SHEETS,  //Google sheets
+        parents:[destFolderId],      //出力先フォルダーを指定
+        name:fileName                    //出力先ファイル名
+      }
+      Drive.Files.create(option,file)
+      
+    
+  
+  Logger.log("変換完了");
+  }
+}
+
+
+    </code></pre>
+
+
+      <h2>５:実行</h2>
+    <p>画面上部のデバッグの隣のところからエクセル変換のときはexcelchenge、CSVのときはcvschengeの関数を選択して下さい。そのあと、実行ボタンを押してください。
+
+
+
+
+    </p>
+
+
+          <h2>６:ごみ捨て</h2>
+    <p>格納していたフォルダはもういらないのでゴミ箱へ
+
+    </p>
+
+
+              <h2>注意！</h2>
+    <p>実行する際やGoogleAppsScriptsを起動するときにセキュリティがかかった時には諦めましょう。
+    </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </article>
+
+
+
+</div>
+
+<!-- Prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+<script>
+  const chk = document.createElement('input');
+  const root = document.documentElement;
+  const prismDarkLink = document.getElementById('prism-dark');
+  const themeToggle = document.getElementById('themeToggle');
+
+  // 初期テーマ
+  if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+    root.setAttribute('data-theme','dark');
+    prismDarkLink.disabled = false;
+  }
+
+  // ボタン操作
+  document.querySelectorAll('button.ctrl').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const act = btn.dataset.action, targetId = btn.dataset.target;
+      if(act==='copy'){
+        const text = document.getElementById(targetId).textContent;
+        await navigator.clipboard.writeText(text);
+        btn.textContent='Copied ✓'; setTimeout(()=>btn.textContent='Copy',1500);
+      } else if(act==='download'){
+        const codeEl = document.getElementById(targetId);
+        const blob = new Blob([codeEl.textContent], {type:'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download='snippet.txt'; a.click(); a.remove(); URL.revokeObjectURL(url);
+      } else if(act==='run'){
+        const code = document.getElementById(targetId).textContent;
+        const w = window.open('', '_blank');
+        w.document.write('<script>'+code+'<\/script>');
+      }
+    });
+  });
+</script>
+</body>
+</html>
